@@ -62,3 +62,17 @@ class Payments(models.Model):
     class Meta:
         verbose_name = 'оплата'
         verbose_name_plural = 'оплата'
+
+
+class Subscription(models.Model):
+    users = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, **NULLABLE, verbose_name='Пользователь'
+    )
+    well = models.ForeignKey(Well, on_delete=models.CASCADE, verbose_name='курс', **NULLABLE, related_name='well_sub')
+
+    def __str__(self):
+        return f'{self.users.name}'
+
+    class Meta:
+        verbose_name = 'подписка'
+        verbose_name_plural = 'подписки'
