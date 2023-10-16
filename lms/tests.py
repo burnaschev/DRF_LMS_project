@@ -1,7 +1,6 @@
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from rest_framework_simplejwt.tokens import RefreshToken
 
 from lms.models import Lesson, Well, Subscription
 from users.models import User
@@ -15,14 +14,8 @@ class LessonTestCase(APITestCase):
             password="2486",
             role='member'
         )
-        refresh = RefreshToken.for_user(self.user)
+        self.client.force_authenticate(user=self.user)
 
-        self.access = {
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
-        }
-
-        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access["access"]}')
         self.lesson = Lesson.objects.create(
             title="test",
             users=self.user
@@ -102,14 +95,9 @@ class SubscriptionTestCase(APITestCase):
             password="2486",
             role='member'
         )
-        refresh = RefreshToken.for_user(self.user)
 
-        self.access = {
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
-        }
+        self.client.force_authenticate(user=self.user)
 
-        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access["access"]}')
         self.well = Well.objects.create(
             title="test"
         )
