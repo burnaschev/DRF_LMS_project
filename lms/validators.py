@@ -1,7 +1,8 @@
-from django.core.exceptions import ValidationError
+from rest_framework.serializers import ValidationError
+
+you_tube = 'https://www.youtube.com'
 
 
 def validator_scam_url(value):
-    yt_base_url = 'https://www.youtube.com'
-    if yt_base_url not in value.lower():
+    if you_tube not in value.lower():
         raise ValidationError('Можно добавлять только ссылки на Youtube')

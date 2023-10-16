@@ -50,7 +50,6 @@ class WellViewSet(viewsets.ModelViewSet):
     permission_classes = [IsModerator | IsUser]
     pagination_class = LMSPaginator
 
-
     def get_queryset(self):
         if self.request.user.role == UserRoles.MEMBER:
             return Well.objects.filter(users=self.request.user)
@@ -84,4 +83,3 @@ class SubscriptionDeleteAPIView(generics.DestroyAPIView):
     queryset = Subscription.objects.all()
     serializer_class = SubscriptionSerializer
     permission_classes = [IsUser]
-

@@ -6,10 +6,11 @@ from users.models import UserRoles
 class IsModerator(permissions.BasePermission):
 
     def has_permission(self, request, view):
-        if request.user.role == UserRoles.MODERATOR:
-            if request.method == 'POST':
-                return False
-            return True
+        if request.user.is_authenticated:
+            if request.user.role == UserRoles.MODERATOR:
+                if request.method == 'POST':
+                    return False
+                return True
         return False
 
     def has_object_permission(self, request, view, obj):
@@ -21,8 +22,9 @@ class IsModerator(permissions.BasePermission):
 class IsUser(permissions.BasePermission):
 
     def has_permission(self, request, view):
-        if request.user.role == UserRoles.MEMBER:
-            return True
+        if request.user.is_authenticated:
+            if request.user.role == UserRoles.MEMBER:
+                return True
         return False
 
     def has_object_permission(self, request, view, obj):
