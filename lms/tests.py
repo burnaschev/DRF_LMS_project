@@ -53,7 +53,8 @@ class LessonTestCase(APITestCase):
 
     def test_lesson_create(self):
         data = {
-            "title": "test2"
+            "title": "test2",
+            "video_url": 'https://www.youtube.com'
         }
 
         response = self.client.post(
@@ -70,6 +71,7 @@ class LessonTestCase(APITestCase):
     def test_update_lesson(self):
         data = {
             'title': 'update test',
+            "video_url": 'https://www.youtube.com'
         }
 
         response = self.client.put(

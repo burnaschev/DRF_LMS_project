@@ -8,7 +8,7 @@ from lms.validators import validator_scam_url
 
 
 class LessonSerializers(serializers.ModelSerializer):
-    video_url = serializers.URLField(validators=[validator_scam_url], read_only=True)
+    video_url = serializers.URLField(validators=[validator_scam_url])
 
     class Meta:
         model = Lesson
