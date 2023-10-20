@@ -55,6 +55,7 @@ class Payments(models.Model):
     date_payment = models.DateTimeField(auto_now=True, verbose_name='дата оплаты')
     amount = models.IntegerField()
     payment_method = models.CharField(max_length=20, choices=payment_method_choices)
+    payment_stripe_id = models.CharField(max_length=255, verbose_name='id платежа', **NULLABLE)
 
     def __str__(self):
         return f'{self.users} - {self.well if self.well else self.lesson} ({self.amount})'

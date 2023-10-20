@@ -1,3 +1,5 @@
+import stripe
+from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, viewsets
 from rest_framework.filters import OrderingFilter
@@ -7,6 +9,8 @@ from lms.paginators import LMSPaginator
 from lms.permission import IsModerator, IsUser
 from lms.serializers import LessonSerializers, WellSerializers, PaymentsSerializer, SubscriptionSerializer
 from users.models import UserRoles
+
+stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
 
 
 class LessonCreateAPIView(generics.CreateAPIView):
@@ -60,13 +64,18 @@ class WellViewSet(viewsets.ModelViewSet):
         serializer = WellSerializers(well)
 
 
-class PaymentsListAPIView(generics.ListAPIView):
+class PaymentsViewSet(viewsets.ModelViewSet):
     serializer_class = PaymentsSerializer
     queryset = Payments.objects.all()
-    permission_classes = [IsModerator | IsUser]
+    permission_classes = [IsUser]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ('well', 'lesson', 'payment_method',)
     ordering_fields = ('date_payment',)
+
+    def perform_create(self, serializer):
+        new_sub = serializer.save()
+        new_sub.users = self.request.user
+        new_sub.save()
 
 
 class SubscriptionCreateAPIView(generics.CreateAPIView):

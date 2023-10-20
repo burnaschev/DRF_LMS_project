@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from lms.models import Lesson, Well, Payments, Subscription
+from lms.services import create_payment_intent, retrieve_payment_intent
 from lms.validators import validator_scam_url
 
 
@@ -36,9 +37,29 @@ class WellSerializers(serializers.ModelSerializer):
 
 
 class PaymentsSerializer(serializers.ModelSerializer):
+    payment_stripe = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Payments
         fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.request = self.context.get('request')
+
+    def get_payment_stripe(self, obj):
+        if self.request.method == 'POST':
+            payment_stripe_id = create_payment_intent(obj.amount)
+            obj_payment = Payments.objects.get(id=obj.id)
+            obj_payment.payment_stripe_id = payment_stripe_id
+            obj_payment.save()
+
+            return retrieve_payment_intent(payment_stripe_id)
+
+        if self.request.method == 'GET':
+            if not obj.payment_stripe_id:
+                return None
+            return retrieve_payment_intent(obj.payment_stripe_id)
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
