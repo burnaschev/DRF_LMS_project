@@ -43,12 +43,10 @@ class PaymentsSerializer(serializers.ModelSerializer):
         model = Payments
         fields = '__all__'
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.request = self.context.get('request')
-
     def get_payment_stripe(self, obj):
-        if self.request.method == 'POST':
+        request = self.context['request']
+
+        if request.method == 'POST':
             payment_stripe_id = create_payment_intent(obj.amount)
             obj_payment = Payments.objects.get(id=obj.id)
             obj_payment.payment_stripe_id = payment_stripe_id
@@ -56,7 +54,7 @@ class PaymentsSerializer(serializers.ModelSerializer):
 
             return retrieve_payment_intent(payment_stripe_id)
 
-        if self.request.method == 'GET':
+        if request.method == 'GET':
             if not obj.payment_stripe_id:
                 return None
             return retrieve_payment_intent(obj.payment_stripe_id)

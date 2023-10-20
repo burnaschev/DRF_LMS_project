@@ -72,6 +72,10 @@ class PaymentsViewSet(viewsets.ModelViewSet):
     filterset_fields = ('well', 'lesson', 'payment_method',)
     ordering_fields = ('date_payment',)
 
+    def get(self, request, *args, **kwargs):
+        obj = self.get_object()
+        serializer = WellSerializers(obj)
+
     def perform_create(self, serializer):
         new_sub = serializer.save()
         new_sub.users = self.request.user
