@@ -8,6 +8,7 @@ from lms.models import Lesson, Well, Payments, Subscription
 from lms.paginators import LMSPaginator
 from lms.permission import IsModerator, IsUser
 from lms.serializers import LessonSerializers, WellSerializers, PaymentsSerializer, SubscriptionSerializer
+from lms.tasks import send_mail_course_update
 from users.models import UserRoles
 
 stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
@@ -62,6 +63,12 @@ class WellViewSet(viewsets.ModelViewSet):
     def get(self, request, *args, **kwargs):
         well = self.get_object()
         serializer = WellSerializers(well)
+
+    def perform_update(self, serializer):
+        new_update = serializer.save()
+        if new_update:
+            send_mail_course_update.delay(well_id=new_update.id)
+            new_update.save()
 
 
 class PaymentsViewSet(viewsets.ModelViewSet):
