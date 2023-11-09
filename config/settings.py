@@ -91,6 +91,7 @@ DATABASES = {
         'NAME': 'lms_base',
         'USER': 'postgres',
         'PASSWORD': os.getenv('BASE_PASSWORD'),
+        'HOST': 'db'
     }
 }
 
@@ -154,8 +155,8 @@ STRIPE_TEST_PUBLISHABLE_KEY = os.getenv('STRIPE_TEST_PUBLISHABLE_KEY')
 STRIPE_TEST_SECRET_KEY = os.getenv('STRIPE_TEST_SECRET_KEY')
 STRIPE_API = os.getenv('STRIPE_API')
 
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
-CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379'
+CELERY_BROKER_URL = 'redis://redis:6379'
+CELERY_RESULT_BACKEND = 'redis://redis:6379'
 CELERY_TIMEZONE = "Europe/Moscow"
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60

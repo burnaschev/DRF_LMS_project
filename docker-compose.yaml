@@ -1,0 +1,55 @@
+version: '3.8'
+services:
+  web:
+    build: .
+    volumes:
+      - .:/code
+    command:
+      sh -c "python3 manage.py migrate &&
+             python3 manage.py runserver 0.0.0.0:8080"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - redis
+    env_file:
+      - .env
+
+  db:
+    image: postgres
+    volumes:
+      - postgresql:/var/lib/postgresql/database-postgres
+      - postgresql_data:/var/lib/postgresql/database-postgres/data
+    environment:
+      POSTGRES_DB: lms_base
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 2486
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:alpine
+
+  celery:
+    build: .
+    command: celery -A LMS worker -l info
+    volumes:
+      - .:/code
+    depends_on:
+      - db
+      - redis
+
+  celery-beat:
+    build: .
+    command: celery -A LMS beat -l info
+    volumes:
+      - .:/code
+    depends_on:
+      - db
+      - redis
+
+
+volumes:
+  postgresql:
+  postgresql_data:
+  redis_data:
