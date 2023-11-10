@@ -11,7 +11,6 @@ class UserRoles(models.TextChoices):
 
 
 class User(AbstractUser):
-
     email = models.EmailField(unique=True, verbose_name='email')
 
     role = models.CharField(max_length=10, choices=UserRoles.choices, default=UserRoles.MEMBER)
@@ -19,4 +18,3 @@ class User(AbstractUser):
     phone = models.CharField(max_length=35, verbose_name='номер телефона', **NULLABLE)
     city = models.CharField(max_length=30, verbose_name='город', **NULLABLE)
     avatar = models.ImageField(upload_to='users/', verbose_name='аватар', **NULLABLE)
-

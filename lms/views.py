@@ -56,9 +56,10 @@ class WellViewSet(viewsets.ModelViewSet):
     pagination_class = LMSPaginator
 
     def get_queryset(self):
-        if self.request.user.role == UserRoles.MEMBER:
-            return Well.objects.filter(users=self.request.user)
-        return Well.objects.all()
+        if self.request.user.is_authenticated:
+            if self.request.user.role == UserRoles.MEMBER:
+                return Well.objects.filter(users=self.request.user)
+            return Well.objects.all()
 
     def get(self, request, *args, **kwargs):
         well = self.get_object()
